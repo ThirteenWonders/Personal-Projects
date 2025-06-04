@@ -1,2 +1,3 @@
 # Vulnerability-Scanner
-Individual Project on vulnerability scanner based on DVWA
+Working on a vulnerability scanner that scans DVWA.
+Scanner will be in python language
