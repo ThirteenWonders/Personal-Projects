@@ -1,0 +1,8 @@
+requests~=2.32.3
+beautifulsoup4~=4.13.4
+urllib3
+colorama~=0.4.6
+bs4~=0.0.2
+selenium~=4.33.0
+webdriver-manager~=4.0.2
+Flask~=3.1.1
