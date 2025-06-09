@@ -53,7 +53,19 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 
 ## How to run program?
 </br>
-**Option 1: Manual run in terminal
+**Option 1: Run the ticket system program**
+</br>
+</br>
+1. Download all the files in the repository
+   </br>
+   </br>
+2. In file explorer, navigate to the folder where you downloaded the files
+ </br>
+   </br>
+3. Run the "ticket.exe" program
+</br>
+</br>
+**Option 2: Manual run in terminal
 **</br>
 </br>
 1. Download all the files
@@ -66,17 +78,6 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 </br>
 </br>
 python ticket.py
-</br>
-</br>
-**Option 2: Run the ticket system program**
-</br>
-</br>
-1. Download all the files in the repository
-   </br>
-   </br>
-3. In file explorer, navigate to the folder where you downloaded the files
- </br>
-   </br>
-5. Run the "ticket.exe" program
+
 
 
