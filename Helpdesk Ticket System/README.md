@@ -52,4 +52,18 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 ------------------------------------------
 
 ## How to run program?
-Option 1: Download all files
+**Manual run in terminal**
+</br>
+Download all the files
+</br>
+</br>
+Navigate to the folder with all the files downloaded
+</br>
+</br>
+Run the following in terminal (Command Prompt / PowerShell):
+</br>
+</br>
+python ticket.py
+</br>
+
+
