@@ -80,7 +80,7 @@ Option 2: Manual run in terminal
 3. Run the following in terminal (Command Prompt / PowerShell):
 </br>
 </br>
-python ticket.py
+`python ticket.py`
 
 
 
