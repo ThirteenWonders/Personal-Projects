@@ -21,16 +21,22 @@ A command-line ticket management system built with Python. Supports admin authen
 Admin accounts are stored in `config.json` using SHA-256 password hashes.  
 
 ## Admin account details
+</br>
 Username: admin1
+</br>
 Password: admin123
-
+</br>
 Username: admin2
+</br>
 Password: admin234
-
+</br>
 Password hashes for both accounts
+</br>
 admin1: 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
 </br>
 admin2: 9924801e8aca687d0a71f4ab14a8ed1644d48348dce8941b6cfdf7fb3076bae2
+
+---
 
 ## To generate your own hashed password
 in python run the following code,
