@@ -29,6 +29,7 @@ Password: admin234
 
 Password hashes for both accounts
 admin1: 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+</br>
 admin2: 9924801e8aca687d0a71f4ab14a8ed1644d48348dce8941b6cfdf7fb3076bae2
 
 ## To generate your own hashed password
