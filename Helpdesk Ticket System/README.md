@@ -53,8 +53,8 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 
 ## How to run program?
 </br>
-Option 1: Manual run in terminal
-</br>
+**Option 1: Manual run in terminal
+**</br>
 </br>
 1. Download all the files
 </br>
@@ -67,8 +67,9 @@ Option 1: Manual run in terminal
 </br>
 python ticket.py
 </br>
-
-Option 2: Run the ticket system program
+</br>
+**Option 2: Run the ticket system program**
+</br>
 </br>
 1. Download all the files in the repository
    </br>
