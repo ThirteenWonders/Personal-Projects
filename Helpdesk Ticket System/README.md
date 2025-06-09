@@ -11,6 +11,7 @@ A command-line ticket management system built with Python. Supports admin authen
 - Change admin password securely
 - Restore deleted tickets
 - Data files auto-created if missing
+- Uses `getpass` for hidden password input
 - CLI-friendly and `.exe` exportable using PyInstaller
 
 ---
