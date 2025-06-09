@@ -55,6 +55,7 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 </br>
 **Manual run in terminal**
 </br>
+</br>
 1. Download all the files
 </br>
 </br>
