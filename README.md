@@ -1,4 +1,4 @@
-# 💼 Personal Projects by Nicholas Ang
+# 💼 Personal Projects
 
 Welcome to my personal project repository! This space showcases self-initiated projects that reflect my interests in both **technical problem-solving** and **practical software development**. Each project demonstrates hands-on application of programming concepts, system design, and real-world logic.
 
@@ -37,7 +37,7 @@ A Python-based scanner to detect common web vulnerabilities in URLs and query pa
 
 ## 👋 About Me
 
-I'm Nicholas Ang, a Computer Science student with interests in cybersecurity and backend systems.  
+I'm Nicholas, a Computer Science student with interests in cybersecurity and backend systems.  
 This repository represents my hands on learning journey exploring problems, building tools, and applying theory in practice.
 
 Feel free to explore, fork, or connect with me!
