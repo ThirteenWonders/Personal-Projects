@@ -65,6 +65,8 @@ print(hashlib.sha256("yourpassword".encode()).hexdigest())
 3. Run the "ticket.exe" program
 </br>
 </br>
+</br>
+</br>
 **Option 2: Manual run in terminal
 **</br>
 </br>
