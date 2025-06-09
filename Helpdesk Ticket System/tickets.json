@@ -1,0 +1,43 @@
+[
+  {
+    "id": "TICKET-001",
+    "user": "test 1",
+    "issue": "wifi",
+    "status": "In Progress",
+    "notes": [
+      {
+        "timestamp": "2025-06-09 21:54:56",
+        "text": "User attempted to connect to wifi with correct credentials but failed. Attempting to reset password now"
+      }
+    ]
+  },
+  {
+    "id": "TICKET-002",
+    "user": "test user 2",
+    "issue": "bluetooth connection issue",
+    "status": "In Progress",
+    "notes": [
+      {
+        "timestamp": "2025-06-09 21:55:34",
+        "text": "bluetooth driver not updated, advised test user 2 to update drivers at xxx.com"
+      }
+    ]
+  },
+  {
+    "id": "TICKET-003",
+    "user": "test 3",
+    "issue": "coffee machine broke",
+    "status": "Closed",
+    "created_at": "2025-06-09 15:37:56",
+    "notes": [
+      {
+        "timestamp": "2025-06-09 15:38:26",
+        "text": "Have notified contractor and arranged a date for troubleshooting"
+      },
+      {
+        "timestamp": "2025-06-09 21:55:55",
+        "text": "contractor has troubleshoot and resolved the coffee machine issue"
+      }
+    ]
+  }
+]

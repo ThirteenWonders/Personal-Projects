@@ -1,0 +1,21 @@
+[
+  {
+    "id": "TICKET-004",
+    "user": "Nic",
+    "issue": "com is lagging",
+    "status": "Closed",
+    "created_at": "2025-06-09 16:34:32",
+    "notes": [
+      {
+        "timestamp": "2025-06-09 16:36:30",
+        "text": "pc is beyond repair. Recommended to change new pc"
+      },
+      {
+        "timestamp": "2025-06-09 16:38:25",
+        "text": "closed ticket"
+      }
+    ],
+    "deleted_by": "admin1",
+    "deleted_at": "2025-06-09 16:39:45"
+  }
+]
