@@ -37,7 +37,7 @@ Run the following Python code:
 ```python
 import hashlib
 print(hashlib.sha256("yourpassword".encode()).hexdigest())
-```markdown
+n
 💡 Replace "yourpassword" with a password of your choice.
 
 ## ▶️ How to Run the Program
