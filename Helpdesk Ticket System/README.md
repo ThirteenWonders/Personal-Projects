@@ -42,6 +42,7 @@ admin2: 9924801e8aca687d0a71f4ab14a8ed1644d48348dce8941b6cfdf7fb3076bae2
 in python run the following code,
 
 import hashlib
+</br>
 print(hashlib.sha256("yourpassword".encode()).hexdigest())
 
 ## Note: replace "yourpassword" with a password of your choice
