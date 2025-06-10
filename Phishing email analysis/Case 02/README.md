@@ -1,6 +1,8 @@
 ## 📧 Case 02 – Fake Gemini Login Alert
 
-![Phishing Email Screenshot](![Case 2](https://github.com/user-attachments/assets/79158774-1b32-4fa3-a069-ddd3d94dc60f))
+## Phishing email screenshot
+![Case 2](https://github.com/user-attachments/assets/712559d5-6e17-4a57-b3fc-5250d0665837)
+
 
 
 ---
