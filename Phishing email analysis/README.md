@@ -27,11 +27,11 @@ Each phishing email example includes:
 
 ## 📂 Examples
 
-| Case | Description | Type |
-|------|-------------|------|
-| Case 01 |  | |
-| Case 02 |  |  |
-| Case 03 |  |  |
+| Case     | Description                                         | Type                  |
+|----------|-----------------------------------------------------|-----------------------|
+| Case 01  | Fake Microsoft Office365 renewal failure notice     | Credential Harvesting |
+| Case 02  | Fake Gemini login alert with suspicious attachment  | Tech Support Scam     |
+| Case 03  | *(To be added)*                                     | *(TBD)*               |
 
 ---
 
