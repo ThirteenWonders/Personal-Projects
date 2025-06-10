@@ -1,6 +1,6 @@
 ## 📧 Case 01 – Fake Microsoft Office365 Renewal Email
 
-![Phishing Email Screenshot](Case1.png)
+![Phishing Email Screenshot]personal-projects/Phishing%20email%20analysis/Case%2001/Case1.png)
 
 ---
 
