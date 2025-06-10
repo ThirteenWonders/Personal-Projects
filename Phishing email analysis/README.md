@@ -54,7 +54,7 @@ It closely mimics a legitimate email from Gemini, referencing real-world topics 
 
 - All screenshots are sanitized and do **not** contain any clickable or live malicious links.
 - Any URLs are obfuscated (e.g., `hxxp://`) to prevent accidental access.
-- 
+  
 ---
 
 ## 🙋 Who Is This For?
