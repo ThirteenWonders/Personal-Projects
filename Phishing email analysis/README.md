@@ -4,6 +4,9 @@ This project documents and analyzes real phishing emails I’ve received (with a
 
 ---
 
+## 🚀 Live App
+[Streamlit App](https://phishingemailanalysis.streamlit.app/)
+
 ## 🧠 Purpose
 
 Phishing remains one of the most common and effective attack vectors in both personal and enterprise environments. This repository aims to:
