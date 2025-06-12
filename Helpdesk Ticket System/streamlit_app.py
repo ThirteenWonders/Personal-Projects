@@ -69,7 +69,7 @@ def create_ticket():
             st.session_state.tickets.append(ticket)
             st.session_state.ticket_counter += 1
             save_data()
-            st.success(f"Hi {user}, we have received your support request and will respond shortly. Your Ticket ID is {ticket_id}")
+            st.success(f"Hi {user}, we have received your support request and will respond shortly. \nYour Ticket ID is {ticket_id}")
 
 def view_tickets():
     if not st.session_state.tickets:
