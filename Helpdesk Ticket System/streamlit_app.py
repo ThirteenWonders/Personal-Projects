@@ -87,26 +87,37 @@ def view_tickets():
 def update_ticket():
     view_tickets()
 
+    if "selected_ticket_id" not in st.session_state:
+        st.session_state.selected_ticket_id = None
+
     with st.form("update_ticket_form"):
         ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
         submitted = st.form_submit_button("Find Ticket")
+        if submitted:
+            st.session_state.selected_ticket_id = ticket_id
 
-    if submitted:
-        for ticket in st.session_state.tickets:
-            if ticket["id"] == ticket_id:
-                new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"])
-                note_text = st.text_area("Add a note describing the update")
-                if st.button("Update Ticket Status"):
-                    ticket["status"] = new_status
-                    ticket["notes"].append({
-                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "text": note_text
-                    })
-                    save_data()
-                    st.success("Ticket updated successfully.")
-                return  # Exit early once found
+    # Only run if we have a selected ticket to update
+    if st.session_state.selected_ticket_id:
+        # Find the ticket object
+        ticket = next((t for t in st.session_state.tickets if t["id"] == st.session_state.selected_ticket_id), None)
+        if ticket:
+            st.markdown(f"### Ticket: {ticket['id']}")
+            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"], index=["Open", "In Progress", "Closed"].index(ticket["status"]))
+            note_text = st.text_area("Add a note describing the update")
 
-        st.error("Ticket not found.")
+            if st.button("Update Ticket Status"):
+                ticket["status"] = new_status
+                ticket["notes"].append({
+                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "text": note_text
+                })
+                save_data()
+                st.success("Ticket updated successfully.")
+                st.session_state.selected_ticket_id = None  # Clear after update
+        else:
+            st.error("Ticket not found.")
+            st.session_state.selected_ticket_id = None  # Clear invalid ID
+
 
 def delete_ticket(admin_username):
     view_tickets()
