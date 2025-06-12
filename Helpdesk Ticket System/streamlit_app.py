@@ -5,11 +5,9 @@ import os
 import hashlib
 from datetime import datetime
 
-
-
 # File paths
 TICKETS_FILE = "tickets.json"
-COUNTER_FILE =  "counters.json"
+COUNTER_FILE = "counters.json"
 RECYCLE_BIN_FILE = "deleted_tickets.json"
 
 # Global state
@@ -19,7 +17,6 @@ if "ticket_counter" not in st.session_state:
     st.session_state.ticket_counter = 1
 
 # Load data
-
 def load_data():
     if os.path.exists(TICKETS_FILE):
         with open(TICKETS_FILE, 'r') as f:
@@ -54,9 +51,9 @@ def hash_password(password):
 
 def create_ticket():
     ticket_id = f"TICKET-{st.session_state.ticket_counter:03d}"
-    user = st.text_input("Enter your name")
-    issue = st.text_area("Describe your issue")
-    if st.button("Submit Ticket"):
+    user = st.text_input("Enter your name", key="create_user")
+    issue = st.text_area("Describe your issue", key="create_issue")
+    if st.button("Submit Ticket", key="submit_ticket"):
         if user and issue:
             ticket = {
                 "id": ticket_id,
@@ -88,26 +85,23 @@ def view_tickets():
 
 def update_ticket():
     view_tickets()
-
     if "selected_ticket_id" not in st.session_state:
         st.session_state.selected_ticket_id = None
 
     with st.form("update_ticket_form"):
-        ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
+        ticket_id = st.text_input("Enter Ticket ID to update", key="update_ticket_id").strip().upper()
         submitted = st.form_submit_button("Find Ticket")
         if submitted:
             st.session_state.selected_ticket_id = ticket_id
 
-    # Only run if we have a selected ticket to update
     if st.session_state.selected_ticket_id:
-        # Find the ticket object
         ticket = next((t for t in st.session_state.tickets if t["id"] == st.session_state.selected_ticket_id), None)
         if ticket:
             st.markdown(f"### Ticket: {ticket['id']}")
-            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"], index=["Open", "In Progress", "Closed"].index(ticket["status"]))
-            note_text = st.text_area("Add a note describing the update")
+            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"], index=["Open", "In Progress", "Closed"].index(ticket["status"]), key="update_status")
+            note_text = st.text_area("Add a note describing the update", key="update_note")
 
-            if st.button("Update Ticket Status"):
+            if st.button("Update Ticket Status", key="submit_update_ticket"):
                 ticket["status"] = new_status
                 ticket["notes"].append({
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -115,18 +109,17 @@ def update_ticket():
                 })
                 save_data()
                 st.success("Ticket updated successfully.")
-                st.session_state.selected_ticket_id = None  # Clear after update
+                st.session_state.selected_ticket_id = None
         else:
             st.error("Ticket not found.")
-            st.session_state.selected_ticket_id = None  # Clear invalid ID
-
+            st.session_state.selected_ticket_id = None
 
 def delete_ticket(admin_username):
     view_tickets()
-    ticket_id = st.text_input("Enter Ticket ID to delete").strip().upper()
+    ticket_id = st.text_input("Enter Ticket ID to delete", key="delete_ticket_id").strip().upper()
     for ticket in st.session_state.tickets:
         if ticket["id"] == ticket_id:
-            if st.button("Confirm Delete"):
+            if st.button("Confirm Delete", key="confirm_delete"):
                 deleted_entry = ticket.copy()
                 deleted_entry['deleted_by'] = admin_username
                 deleted_entry['deleted_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -146,7 +139,7 @@ def restore_deleted_ticket():
     for i, ticket in enumerate(deleted):
         with st.expander(f"{ticket['id']} | Deleted by: {ticket.get('deleted_by', 'Unknown')}"):
             st.write(f"User: {ticket['user']} | Status: {ticket['status']} | Deleted at: {ticket['deleted_at']}")
-            if st.button(f"Restore {ticket['id']}"):
+            if st.button(f"Restore {ticket['id']}", key=f"restore_{ticket['id']}"):
                 ticket.pop('deleted_by', None)
                 ticket.pop('deleted_at', None)
                 st.session_state.tickets.append(ticket)
@@ -157,120 +150,58 @@ def restore_deleted_ticket():
                 st.success("Ticket restored successfully.")
                 st.experimental_rerun()
 
-def search_by_user():
-    name = st.text_input("Enter name to search for tickets")
-    if name:
-        found = False
-        for ticket in st.session_state.tickets:
-            if ticket["user"].lower() == name.lower():
-                st.text(f"ID: {ticket['id']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
-                found = True
-        if not found:
-            st.info("No tickets found for that user.")
-
-def filter_tickets():
-    status = st.selectbox("Filter tickets by status", ["Open", "In Progress", "Closed"])
-    for ticket in st.session_state.tickets:
-        if ticket["status"] == status:
-            st.text(f"ID: {ticket['id']}, User: {ticket['user']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
-
-
 def show_instructions():
-    st.title("📘 Instructions: Helpdesk Ticket System")
-
+    st.title("\U0001F4D8 Instructions: Helpdesk Ticket System")
     st.markdown("""
-### 👤 For Users (Non-Admin)
+### For Users
+- Submit a ticket with your name and issue.
 
-1. **Submit a Ticket**
-   - Fill in the required information (name, issue category, description).
-   - Click **Submit Ticket** to generate a unique Ticket ID.
-   - Your ticket will be reviewed and updated by an administrator.
+### For Admins
+- Login at top right
+- View, update, delete, and restore tickets
 
----
-
-### 🔐 For Admins
-
-1. **Login**
-   - Click the **Admin Login** button at the top right.
-   - Enter your **admin username and password**.
-   - Upon success, you’ll see additional admin options.
-
-2. **Admin Features**
-   - **View Tickets**: See all submitted tickets with status and timestamps.
-   - **Update Ticket**: Change the status of a ticket and add notes.
-   - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
-   - **Restore Ticket**: Recover deleted tickets from the recycle bin.
-   - **Change Admin Password**: Update your own login credentials securely.
-
----
-
-### 💡 Notes
-
-- All data is saved to `.json` files and will persist between sessions.
-- Passwords are stored securely using SHA-256 hashing.
-- Admin logins are tracked to ensure accountability for deletions.
-
-If you encounter any issues, please contact the system administrator.
+All actions are saved with timestamps and tracked.
     """)
-
 
 def admin_menu(username):
     st.subheader(f"Welcome, {username}")
-    admin_options = [
-        "View All Tickets", "Update Ticket", "Filter by Status", "Search by User",
-        "Delete a Ticket", "Restore Deleted Ticket"
-    ]
-    action = st.selectbox("Choose an admin action", admin_options)
-    if action == "View All Tickets":
+    option = st.selectbox("Admin Actions", ["View All Tickets", "Update Ticket", "Delete a Ticket", "Restore Deleted Ticket"], key="admin_menu_select")
+    if option == "View All Tickets":
         view_tickets()
-    elif action == "Update Ticket":
+    elif option == "Update Ticket":
         update_ticket()
-    elif action == "Filter by Status":
-        filter_tickets()
-    elif action == "Search by User":
-        search_by_user()
-    elif action == "Delete a Ticket":
+    elif option == "Delete a Ticket":
         delete_ticket(username)
-    elif action == "Restore Deleted Ticket":
+    elif option == "Restore Deleted Ticket":
         restore_deleted_ticket()
 
-
-# UI
+# App UI starts here
 load_data()
 
-# Top layout: App title (left) and admin login/logout (right)
 col1, col2 = st.columns([6, 1])
-
 with col1:
-    st.title("🎫 Helpdesk Ticket System")
-
+    st.title("\U0001F3AB Helpdesk Ticket System")
 with col2:
     if "admin" in st.session_state:
         st.success(f"{st.session_state['admin']} logged in")
-        if st.button("Logout"):
+        if st.button("Logout", key="logout_button"):
             del st.session_state["admin"]
             st.success("Logged out successfully.")
     else:
-        if st.button("Admin Login"):
+        if st.button("Admin Login", key="login_button"):
             st.session_state["show_login"] = True
 
-
-if "admin" not in st.session_state and not st.session_state.get("show_login"):
-    create_ticket()
-
-
-# Admin login form logic
+# Admin login form
 if st.session_state.get("show_login") and "admin" not in st.session_state:
-    st.subheader("🔐 Admin Login")
+    st.subheader("\U0001F512 Admin Login")
     if "login_attempts" not in st.session_state:
         st.session_state.login_attempts = 0
-
     if st.session_state.login_attempts >= 3:
-        st.warning("Too many failed attempts. Please refresh the page to try again.")
+        st.warning("Too many failed attempts. Please refresh the page.")
     else:
-        username = st.text_input("Admin Username")
-        password = st.text_input("Password", type="password")
-        if st.button("Login"):
+        username = st.text_input("Admin Username", key="login_user")
+        password = st.text_input("Password", type="password", key="login_pass")
+        if st.button("Login", key="login_submit"):
             admins = load_admins_hash()
             hashed = hash_password(password)
             if username in admins and admins[username] == hashed:
@@ -280,28 +211,15 @@ if st.session_state.get("show_login") and "admin" not in st.session_state:
                 st.success(f"Welcome, {username}!")
             else:
                 st.session_state.login_attempts += 1
-                attempts_left = 3 - st.session_state.login_attempts
-                st.error(f"Invalid username or password. {attempts_left} attempts left.")
-
-
-if "admin" in st.session_state:
-    admin_menu(st.session_state["admin"])
-
-
+                st.error("Invalid username or password")
 
 # Sidebar navigation
-option = st.sidebar.radio("Navigation", ["Home", "Instructions"])
+nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
 
-# Routing logic
-if option == "Instructions":
+if nav == "Instructions":
     show_instructions()
-
-elif option == "Home":
-    if "admin" not in st.session_state and not st.session_state.get("show_login"):
-        create_ticket()
-
-elif option == "Admin Panel":
+elif nav == "Home":
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
     else:
-        st.warning("Please login as admin to access this panel.")
+        create_ticket()
