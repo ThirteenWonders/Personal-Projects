@@ -86,23 +86,26 @@ def view_tickets():
 
 def update_ticket():
     view_tickets()
-    ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
-    for ticket in st.session_state.tickets:
-        if ticket["id"] == ticket_id:
-            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"])
-            note_text = st.text_area("Add a note describing the update")
-            if st.button("Update Ticket"):
-                ticket["status"] = new_status
-                note_entry = {
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "text": note_text
-                }
-                ticket["notes"].append(note_entry)
-                save_data()
-                st.success("Ticket updated successfully!")
-                return
-    # No match
-    if ticket_id:
+
+    with st.form("update_ticket_form"):
+        ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
+        submitted = st.form_submit_button("Find Ticket")
+
+    if submitted:
+        for ticket in st.session_state.tickets:
+            if ticket["id"] == ticket_id:
+                new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"])
+                note_text = st.text_area("Add a note describing the update")
+                if st.button("Update Ticket Status"):
+                    ticket["status"] = new_status
+                    ticket["notes"].append({
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "text": note_text
+                    })
+                    save_data()
+                    st.success("Ticket updated successfully.")
+                return  # Exit early once found
+
         st.error("Ticket not found.")
 
 def delete_ticket(admin_username):
