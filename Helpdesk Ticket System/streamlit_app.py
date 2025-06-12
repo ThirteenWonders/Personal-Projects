@@ -166,7 +166,7 @@ def restore_deleted_ticket():
                 with open(RECYCLE_BIN_FILE, "w") as f:
                     json.dump(deleted, f, indent=2)
                 st.success("Ticket restored successfully.")
-                st.experimental_rerun()
+                st.rerun()
 
 def show_instructions():
     st.title("📘 Instructions:")
@@ -269,7 +269,7 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts = 0
                     st.session_state.show_login = False
                     st.success(f"Welcome, {username}!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.session_state.login_attempts += 1
                     st.error("Invalid username or password")
