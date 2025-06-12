@@ -213,6 +213,11 @@ with col2:
         if st.button("Admin Login"):
             st.session_state["show_login"] = True
 
+
+if "admin" not in st.session_state and not st.session_state.get("show_login"):
+    create_ticket()
+
+
 # Admin login form logic
 if st.session_state.get("show_login") and "admin" not in st.session_state:
     st.subheader("🔐 Admin Login")
