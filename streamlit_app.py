@@ -69,7 +69,8 @@ def create_ticket():
             st.session_state.tickets.append(ticket)
             st.session_state.ticket_counter += 1
             save_data()
-            st.success(f"Hi {user}, we have received your support request and will respond shortly. Your Ticket ID is {ticket_id}")
+            st.success(f"Hi {user}, we have received your support request and will respond shortly.")
+            st.success(f"Your Ticket ID is {ticket_id}")
 
 def view_tickets():
     if not st.session_state.tickets:
@@ -173,6 +174,46 @@ def filter_tickets():
         if ticket["status"] == status:
             st.text(f"ID: {ticket['id']}, User: {ticket['user']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
 
+
+def show_instructions():
+    st.title("📘 Instructions: Helpdesk Ticket System")
+
+    st.markdown("""
+### 👤 For Users (Non-Admin)
+
+1. **Submit a Ticket**
+   - Fill in the required information (name, issue category, description).
+   - Click **Submit Ticket** to generate a unique Ticket ID.
+   - Your ticket will be reviewed and updated by an administrator.
+
+---
+
+### 🔐 For Admins
+
+1. **Login**
+   - Click the **Admin Login** button at the top right.
+   - Enter your **admin username and password**.
+   - Upon success, you’ll see additional admin options.
+
+2. **Admin Features**
+   - **View Tickets**: See all submitted tickets with status and timestamps.
+   - **Update Ticket**: Change the status of a ticket and add notes.
+   - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
+   - **Restore Ticket**: Recover deleted tickets from the recycle bin.
+   - **Change Admin Password**: Update your own login credentials securely.
+
+---
+
+### 💡 Notes
+
+- All data is saved to `.json` files and will persist between sessions.
+- Passwords are stored securely using SHA-256 hashing.
+- Admin logins are tracked to ensure accountability for deletions.
+
+If you encounter any issues, please contact the system administrator.
+    """)
+
+
 def admin_menu(username):
     st.subheader(f"Welcome, {username}")
     admin_options = [
@@ -214,8 +255,8 @@ with col2:
             st.session_state["show_login"] = True
 
 
-if "admin" not in st.session_state:
-    user_view()
+if "admin" not in st.session_state and not st.session_state.get("show_login"):
+    create_ticket()
 
 
 # Admin login form logic
@@ -245,3 +286,22 @@ if st.session_state.get("show_login") and "admin" not in st.session_state:
 
 if "admin" in st.session_state:
     admin_menu(st.session_state["admin"])
+
+
+
+# Sidebar navigation
+option = st.sidebar.radio("Navigation", ["Home", "Instructions"])
+
+# Routing logic
+if option == "Instructions":
+    show_instructions()
+el
+elif option == "Home":
+    if "admin" not in st.session_state and not st.session_state.get("show_login"):
+        create_ticket()
+
+elif option == "Admin Panel":
+    if "admin" in st.session_state:
+        admin_menu(st.session_state["admin"])
+    else:
+        st.warning("Please login as admin to access this panel.")
