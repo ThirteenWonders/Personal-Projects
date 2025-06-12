@@ -10,7 +10,7 @@ case = st.sidebar.selectbox("Choose a Case", ["Case 01", "Case 02", "Case 03"])
 def load_case(case):
     if case == "Case 01":
         return {
-            "image_path": "/case01/case1.png",
+            "image_url": "https://raw.githubusercontent.com/ThirteenWonders/Personal-Projects/main/Phishing-email-analysis/case01/case1.png",
             "red_flags": [
                 "Sender domain is not Microsoft: refreshfaces.com",
                 "Suspicious .mobileconfig attachment",
@@ -27,7 +27,7 @@ def load_case(case):
         }
     elif case == "Case 02":
         return {
-            "image_path": "/case02/case2.png",
+            "image_url": "https://raw.githubusercontent.com/ThirteenWonders/Personal-Projects/main/Phishing-email-analysis/case02/case2.png",
             "red_flags": [
                 "Sender domain not associated with Gemini",
                 "Includes .mobileconfig attachment",
@@ -44,7 +44,7 @@ def load_case(case):
         }
     elif case == "Case 03":
         return {
-            "image_path": "/case03/case3.png",
+            "image_url": "https://raw.githubusercontent.com/ThirteenWonders/Personal-Projects/main/Phishing-email-analysis/case03/case3.png",
             "red_flags": [
                 "Sender domain is spoofed (not gemini.com)",
                 "References real-world regulation for believability",
@@ -59,7 +59,6 @@ def load_case(case):
                 "Be extra cautious with crypto-related emails"
             ]
         }
-
 # Load content
 data = load_case(case)
 
