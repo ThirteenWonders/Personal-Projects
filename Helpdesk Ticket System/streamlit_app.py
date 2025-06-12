@@ -200,6 +200,7 @@ elif choice == "Admin Login":
     password = st.text_input("Password", type="password")
     if st.button("Login"):
         admins = load_admins_hash()
+        st.write("DEBUG CONFIG:", load_admins_hash())
         hashed = hash_password(password)
         if username in admins and admins[username] == hashed:
             st.session_state["admin"] = username
