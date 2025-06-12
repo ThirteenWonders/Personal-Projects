@@ -251,7 +251,6 @@ def show_instructions():
        - **Update Ticket**: Change the status of a ticket and add notes.
        - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
        - **Restore Ticket**: Recover deleted tickets from the recycle bin.
-       - **Change Admin Password**: Update your own login credentials securely.
 
     ---
 
