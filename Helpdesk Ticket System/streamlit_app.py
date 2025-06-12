@@ -174,6 +174,46 @@ def filter_tickets():
         if ticket["status"] == status:
             st.text(f"ID: {ticket['id']}, User: {ticket['user']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
 
+
+def show_instructions():
+    st.title("📘 Instructions: Helpdesk Ticket System")
+
+    st.markdown("""
+### 👤 For Users (Non-Admin)
+
+1. **Submit a Ticket**
+   - Fill in the required information (name, issue category, description).
+   - Click **Submit Ticket** to generate a unique Ticket ID.
+   - Your ticket will be reviewed and updated by an administrator.
+
+---
+
+### 🔐 For Admins
+
+1. **Login**
+   - Click the **Admin Login** button at the top right.
+   - Enter your **admin username and password**.
+   - Upon success, you’ll see additional admin options.
+
+2. **Admin Features**
+   - **View Tickets**: See all submitted tickets with status and timestamps.
+   - **Update Ticket**: Change the status of a ticket and add notes.
+   - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
+   - **Restore Ticket**: Recover deleted tickets from the recycle bin.
+   - **Change Admin Password**: Update your own login credentials securely.
+
+---
+
+### 💡 Notes
+
+- All data is saved to `.json` files and will persist between sessions.
+- Passwords are stored securely using SHA-256 hashing.
+- Admin logins are tracked to ensure accountability for deletions.
+
+If you encounter any issues, please contact the system administrator.
+    """)
+
+
 def admin_menu(username):
     st.subheader(f"Welcome, {username}")
     admin_options = [
@@ -209,7 +249,6 @@ with col2:
         st.success(f"{st.session_state['admin']} logged in")
         if st.button("Logout"):
             del st.session_state["admin"]
-            st.session_state["show_login"] = False  # Ensure form stays hidden
             st.success("Logged out successfully.")
     else:
         if st.button("Admin Login"):
@@ -239,7 +278,6 @@ if st.session_state.get("show_login") and "admin" not in st.session_state:
                 st.session_state.login_attempts = 0
                 st.session_state.show_login = False
                 st.success(f"Welcome, {username}!")
-                st.experimental_rerun()
             else:
                 st.session_state.login_attempts += 1
                 attempts_left = 3 - st.session_state.login_attempts
@@ -248,3 +286,20 @@ if st.session_state.get("show_login") and "admin" not in st.session_state:
 
 if "admin" in st.session_state:
     admin_menu(st.session_state["admin"])
+
+
+
+# Sidebar navigation
+option = st.sidebar.radio("Navigation", ["Home", "Instructions", "Admin Panel"])
+
+# Routing logic
+if option == "Instructions":
+    show_instructions()
+elif option == "Home":
+    if "admin" not in st.session_state and not st.session_state.get("show_login"):
+        create_ticket()
+elif option == "Admin Panel":
+    if "admin" in st.session_state:
+        admin_menu(st.session_state["admin"])
+    else:
+        st.warning("Please login as admin to access this panel.")
