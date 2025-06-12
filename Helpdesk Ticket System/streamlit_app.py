@@ -47,12 +47,7 @@ def save_data():
         f.write(str(st.session_state.ticket_counter))
 
 def load_admins_hash():
-    try:
-        with open(CONFIG_FILE) as f:
-            config = json.load(f)
-        return config.get("admins", {})
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
+    return dict(st.secrets["admins"])
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
