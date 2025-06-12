@@ -251,26 +251,28 @@ with col2:
             st.session_state["show_login"] = True
 
 # Admin login form
-if st.session_state.get("show_login") and "admin" not in st.session_state:
-    st.subheader("\U0001F512 Admin Login")
-    if "login_attempts" not in st.session_state:
-        st.session_state.login_attempts = 0
-    if st.session_state.login_attempts >= 3:
-        st.warning("Too many failed attempts. Please refresh the page.")
-    else:
-        username = st.text_input("Admin Username", key="login_user")
-        password = st.text_input("Password", type="password", key="login_pass")
-        if st.button("Login", key="login_submit"):
-            admins = load_admins_hash()
-            hashed = hash_password(password)
-            if username in admins and admins[username] == hashed:
-                st.session_state["admin"] = username
-                st.session_state.login_attempts = 0
-                st.session_state.show_login = False
-                st.success(f"Welcome, {username}!")
-            else:
-                st.session_state.login_attempts += 1
-                st.error("Invalid username or password")
+if "admin" not in st.session_state:
+    if st.session_state.get("show_login"):
+        st.subheader("\U0001F512 Admin Login")
+        if "login_attempts" not in st.session_state:
+            st.session_state.login_attempts = 0
+        if st.session_state.login_attempts >= 3:
+            st.warning("Too many failed attempts. Please refresh the page.")
+        else:
+            username = st.text_input("Admin Username", key="login_user")
+            password = st.text_input("Password", type="password", key="login_pass")
+            if st.button("Login", key="login_submit"):
+                admins = load_admins_hash()
+                hashed = hash_password(password)
+                if username in admins and admins[username] == hashed:
+                    st.session_state["admin"] = username
+                    st.session_state.login_attempts = 0
+                    st.session_state.show_login = False
+                    st.success(f"Welcome, {username}!")
+                else:
+                    st.session_state.login_attempts += 1
+                    st.error("Invalid username or password")
+
 
 # Sidebar navigation
 nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
