@@ -10,7 +10,7 @@ case = st.sidebar.selectbox("Choose a Case", ["Case 01", "Case 02", "Case 03"])
 def load_case(case):
     if case == "Case 01":
         return {
-            "image_path": "Phishing_email_analysis/Case01/Case1.png",
+            "image_path": "Phishing_email_analysis/case01/case1.png",
             "red_flags": [
                 "Sender domain is not Microsoft: refreshfaces.com",
                 "Suspicious .mobileconfig attachment",
@@ -27,7 +27,7 @@ def load_case(case):
         }
     elif case == "Case 02":
         return {
-            "image_path": "Phishing_email_analysis/Case02/Case2.png",
+            "image_path": "Phishing_email_analysis/case02/case2.png",
             "red_flags": [
                 "Sender domain not associated with Gemini",
                 "Includes .mobileconfig attachment",
@@ -44,7 +44,7 @@ def load_case(case):
         }
     elif case == "Case 03":
         return {
-            "image_path": "Phishing_email_analysis/Case03/Case3.png",
+            "image_path": "Phishing_email_analysis/case03/case3.png",
             "red_flags": [
                 "Sender domain is spoofed (not gemini.com)",
                 "References real-world regulation for believability",
