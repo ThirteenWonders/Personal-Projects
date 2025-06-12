@@ -3,14 +3,14 @@ import streamlit as st
 import json
 import os
 import hashlib
-import shutil
 from datetime import datetime
+
+
 
 # File paths
 TICKETS_FILE = "tickets.json"
 COUNTER_FILE =  "counters.json"
 RECYCLE_BIN_FILE = "deleted_tickets.json"
-CONFIG_FILE = "config.json"
 
 # Global state
 if "tickets" not in st.session_state:
@@ -47,12 +47,7 @@ def save_data():
         f.write(str(st.session_state.ticket_counter))
 
 def load_admins_hash():
-    try:
-        with open(CONFIG_FILE) as f:
-            config = json.load(f)
-        return config.get("admins", {})
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
+    return dict(st.secrets["admins"])
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -92,24 +87,38 @@ def view_tickets():
 
 def update_ticket():
     view_tickets()
-    ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
-    for ticket in st.session_state.tickets:
-        if ticket["id"] == ticket_id:
-            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"])
+
+    if "selected_ticket_id" not in st.session_state:
+        st.session_state.selected_ticket_id = None
+
+    with st.form("update_ticket_form"):
+        ticket_id = st.text_input("Enter Ticket ID to update").strip().upper()
+        submitted = st.form_submit_button("Find Ticket")
+        if submitted:
+            st.session_state.selected_ticket_id = ticket_id
+
+    # Only run if we have a selected ticket to update
+    if st.session_state.selected_ticket_id:
+        # Find the ticket object
+        ticket = next((t for t in st.session_state.tickets if t["id"] == st.session_state.selected_ticket_id), None)
+        if ticket:
+            st.markdown(f"### Ticket: {ticket['id']}")
+            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"], index=["Open", "In Progress", "Closed"].index(ticket["status"]))
             note_text = st.text_area("Add a note describing the update")
-            if st.button("Update Ticket"):
+
+            if st.button("Update Ticket Status"):
                 ticket["status"] = new_status
-                note_entry = {
+                ticket["notes"].append({
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "text": note_text
-                }
-                ticket["notes"].append(note_entry)
+                })
                 save_data()
-                st.success("Ticket updated successfully!")
-                return
-    # No match
-    if ticket_id:
-        st.error("Ticket not found.")
+                st.success("Ticket updated successfully.")
+                st.session_state.selected_ticket_id = None  # Clear after update
+        else:
+            st.error("Ticket not found.")
+            st.session_state.selected_ticket_id = None  # Clear invalid ID
+
 
 def delete_ticket(admin_username):
     view_tickets()
@@ -184,30 +193,55 @@ def admin_menu(username):
     elif action == "Restore Deleted Ticket":
         restore_deleted_ticket()
 
+
 # UI
-st.title("🎫 Helpdesk Ticket System")
 load_data()
 
-menu = ["Submit Ticket", "Admin Login"]
-choice = st.sidebar.selectbox("Menu", menu)
+# Top layout: App title (left) and admin login/logout (right)
+col1, col2 = st.columns([6, 1])
 
-if choice == "Submit Ticket":
-    create_ticket()
+with col1:
+    st.title("🎫 Helpdesk Ticket System")
 
-elif choice == "Admin Login":
-    st.subheader("Admin Login")
-    username = st.text_input("Admin Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        admins = load_admins_hash()
-        st.write("DEBUG (for testing only):", admins)
-        hashed = hash_password(password)
-        st.write(f"Entered hash: {hashed}")
-        if username in admins and admins[username] == hashed:
-            st.session_state["admin"] = username
-            st.success(f"Welcome, {username}!")
-        else:
-            st.error("Invalid username or password")
+with col2:
+    if "admin" in st.session_state:
+        st.success(f"{st.session_state['admin']} logged in")
+        if st.button("Logout"):
+            del st.session_state["admin"]
+            st.success("Logged out successfully.")
+    else:
+        if st.button("Admin Login"):
+            st.session_state["show_login"] = True
+
+
+if "admin" not in st.session_state:
+    user_view()
+
+
+# Admin login form logic
+if st.session_state.get("show_login") and "admin" not in st.session_state:
+    st.subheader("🔐 Admin Login")
+    if "login_attempts" not in st.session_state:
+        st.session_state.login_attempts = 0
+
+    if st.session_state.login_attempts >= 3:
+        st.warning("Too many failed attempts. Please refresh the page to try again.")
+    else:
+        username = st.text_input("Admin Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            admins = load_admins_hash()
+            hashed = hash_password(password)
+            if username in admins and admins[username] == hashed:
+                st.session_state["admin"] = username
+                st.session_state.login_attempts = 0
+                st.session_state.show_login = False
+                st.success(f"Welcome, {username}!")
+            else:
+                st.session_state.login_attempts += 1
+                attempts_left = 3 - st.session_state.login_attempts
+                st.error(f"Invalid username or password. {attempts_left} attempts left.")
+
 
 if "admin" in st.session_state:
     admin_menu(st.session_state["admin"])
