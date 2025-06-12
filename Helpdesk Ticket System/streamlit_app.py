@@ -209,6 +209,7 @@ with col2:
         st.success(f"{st.session_state['admin']} logged in")
         if st.button("Logout"):
             del st.session_state["admin"]
+            st.session_state["show_login"] = False  # Ensure form stays hidden
             st.success("Logged out successfully.")
     else:
         if st.button("Admin Login"):
@@ -238,6 +239,7 @@ if st.session_state.get("show_login") and "admin" not in st.session_state:
                 st.session_state.login_attempts = 0
                 st.session_state.show_login = False
                 st.success(f"Welcome, {username}!")
+                st.experimental_rerun()
             else:
                 st.session_state.login_attempts += 1
                 attempts_left = 3 - st.session_state.login_attempts
