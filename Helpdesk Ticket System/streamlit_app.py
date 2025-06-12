@@ -198,8 +198,6 @@ elif choice == "Admin Login":
     st.subheader("Admin Login")
     username = st.text_input("Admin Username")
     password = st.text_input("Password", type="password")
-    st.write(f"Entered username: '{username}'")
-    st.write(f"Admin list: {list(admins.keys())}")
     if st.button("Login"):
         admins = load_admins_hash()
         hashed = hash_password(password)
