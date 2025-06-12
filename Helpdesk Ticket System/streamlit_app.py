@@ -3,8 +3,9 @@ import streamlit as st
 import json
 import os
 import hashlib
-import shutil
 from datetime import datetime
+
+
 
 # File paths
 TICKETS_FILE = "tickets.json"
@@ -192,37 +193,50 @@ def admin_menu(username):
     elif action == "Restore Deleted Ticket":
         restore_deleted_ticket()
 
+
 # UI
-st.title("🎫 Helpdesk Ticket System")
 load_data()
 
-menu = ["Submit Ticket", "Admin Login"]
-choice = st.sidebar.selectbox("Menu", menu)
+# Top layout: App title (left) and admin login/logout (right)
+col1, col2 = st.columns([6, 1])
 
-if choice == "Submit Ticket":
-    create_ticket()
+with col1:
+    st.title("🎫 Helpdesk Ticket System")
 
-elif choice == "Admin Login":
+with col2:
     if "admin" in st.session_state:
-        st.success(f"Welcome back, {st.session_state['admin']}! You are already logged in.")
+        st.success(f"{st.session_state['admin']} logged in")
+        if st.button("Logout"):
+            del st.session_state["admin"]
+            st.success("Logged out successfully.")
     else:
-        st.subheader("Admin Login")
-        if st.session_state.login_attempts >= 3:
-            st.warning("Too many failed attempts. Please refresh the page to try again.")
-        else:
-            username = st.text_input("Admin Username")
-            password = st.text_input("Password", type="password")
-            if st.button("Login"):
-                admins = load_admins_hash()
-                hashed = hash_password(password)
-                if username in admins and admins[username] == hashed:
-                    st.session_state["admin"] = username
-                    st.session_state.login_attempts = 0
-                    st.success(f"Welcome, {username}!")
-                else:
-                    st.session_state.login_attempts += 1
-                    attempts_left = 3 - st.session_state.login_attempts
-                    st.error(f"Invalid username or password. {attempts_left} attempts left.")
+        if st.button("Admin Login"):
+            st.session_state["show_login"] = True
+
+# Admin login form logic
+if st.session_state.get("show_login") and "admin" not in st.session_state:
+    st.subheader("🔐 Admin Login")
+    if "login_attempts" not in st.session_state:
+        st.session_state.login_attempts = 0
+
+    if st.session_state.login_attempts >= 3:
+        st.warning("Too many failed attempts. Please refresh the page to try again.")
+    else:
+        username = st.text_input("Admin Username")
+        password = st.text_input("Password", type="password")
+        if st.button("Login"):
+            admins = load_admins_hash()
+            hashed = hash_password(password)
+            if username in admins and admins[username] == hashed:
+                st.session_state["admin"] = username
+                st.session_state.login_attempts = 0
+                st.session_state.show_login = False
+                st.success(f"Welcome, {username}!")
+            else:
+                st.session_state.login_attempts += 1
+                attempts_left = 3 - st.session_state.login_attempts
+                st.error(f"Invalid username or password. {attempts_left} attempts left.")
+
 
 if "admin" in st.session_state:
     admin_menu(st.session_state["admin"])
