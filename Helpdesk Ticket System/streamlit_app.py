@@ -189,17 +189,26 @@ if choice == "Submit Ticket":
     create_ticket()
 
 elif choice == "Admin Login":
-    st.subheader("Admin Login")
-    username = st.text_input("Admin Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        admins = load_admins_hash()
-        hashed = hash_password(password)
-        if username in admins and admins[username] == hashed:
-            st.session_state["admin"] = username
-            st.success(f"Welcome, {username}!")
+    if "admin" in st.session_state:
+        st.success(f"Welcome back, {st.session_state['admin']}! You are already logged in.")
+    else:
+        st.subheader("Admin Login")
+        if st.session_state.login_attempts >= 3:
+            st.warning("Too many failed attempts. Please refresh the page to try again.")
         else:
-            st.error("Invalid username or password")
+            username = st.text_input("Admin Username")
+            password = st.text_input("Password", type="password")
+            if st.button("Login"):
+                admins = load_admins_hash()
+                hashed = hash_password(password)
+                if username in admins and admins[username] == hashed:
+                    st.session_state["admin"] = username
+                    st.session_state.login_attempts = 0
+                    st.success(f"Welcome, {username}!")
+                else:
+                    st.session_state.login_attempts += 1
+                    attempts_left = 3 - st.session_state.login_attempts
+                    st.error(f"Invalid username or password. {attempts_left} attempts left.")
 
 if "admin" in st.session_state:
     admin_menu(st.session_state["admin"])
