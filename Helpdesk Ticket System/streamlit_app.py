@@ -168,6 +168,8 @@ def show_instructions():
 1. **Login**
    - Click the **Admin Login** button at the top right.
    - Enter your **admin username and password**.
+   - Username: admin1
+   - Password: admin123
    - Upon success, you’ll see additional admin options.
 
 2. **Admin Features**
