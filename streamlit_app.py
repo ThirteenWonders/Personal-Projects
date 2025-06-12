@@ -257,8 +257,6 @@ with col2:
 
 if "admin" not in st.session_state and not st.session_state.get("show_login"):
     create_ticket()
-
-
 # Admin login form logic
 if st.session_state.get("show_login") and "admin" not in st.session_state:
     st.subheader("🔐 Admin Login")
@@ -295,12 +293,12 @@ option = st.sidebar.radio("Navigation", ["Home", "Instructions"])
 # Routing logic
 if option == "Instructions":
     show_instructions()
-el
+
 elif option == "Home":
     if "admin" not in st.session_state and not st.session_state.get("show_login"):
         create_ticket()
-
-elif option == "Admin Panel":
+if "admin" not in st.session_state and not st.session_state.get("show_login"):
+    create_ticket()
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
     else:
