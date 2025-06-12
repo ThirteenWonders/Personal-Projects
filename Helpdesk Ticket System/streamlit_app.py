@@ -151,16 +151,41 @@ def restore_deleted_ticket():
                 st.experimental_rerun()
 
 def show_instructions():
-    st.title("\U0001F4D8 Instructions: Helpdesk Ticket System")
+    st.title("📘 Instructions: Helpdesk Ticket System")
+
     st.markdown("""
-### For Users
-- Submit a ticket with your name and issue.
+### 👤 For Users (Non-Admin)
 
-### For Admins
-- Login at top right
-- View, update, delete, and restore tickets
+1. **Submit a Ticket**
+   - Fill in the required information (name, issue category, description).
+   - Click **Submit Ticket** to generate a unique Ticket ID.
+   - Your ticket will be reviewed and updated by an administrator.
 
-All actions are saved with timestamps and tracked.
+---
+
+### 🔐 For Admins
+
+1. **Login**
+   - Click the **Admin Login** button at the top right.
+   - Enter your **admin username and password**.
+   - Upon success, you’ll see additional admin options.
+
+2. **Admin Features**
+   - **View Tickets**: See all submitted tickets with status and timestamps.
+   - **Update Ticket**: Change the status of a ticket and add notes.
+   - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
+   - **Restore Ticket**: Recover deleted tickets from the recycle bin.
+   - **Change Admin Password**: Update your own login credentials securely.
+
+---
+
+### 💡 Notes
+
+- All data is saved to `.json` files and will persist between sessions.
+- Passwords are stored securely using SHA-256 hashing.
+- Admin logins are tracked to ensure accountability for deletions.
+
+If you encounter any issues, please contact the system administrator.
     """)
 
 def admin_menu(username):
