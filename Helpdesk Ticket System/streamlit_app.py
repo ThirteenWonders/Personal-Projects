@@ -187,7 +187,7 @@ def show_instructions():
 - Passwords are stored securely using SHA-256 hashing.
 - Admin logins are tracked to ensure accountability for deletions.
 
-If you encounter any issues, please contact the system administrator.
+If you encounter any issues, please contact the system administrator @ nicholasang1@outlook.com
     """)
 
 def admin_menu(username):
