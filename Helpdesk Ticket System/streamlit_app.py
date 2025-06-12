@@ -185,7 +185,7 @@ def admin_menu(username):
         restore_deleted_ticket()
 
 # UI
-st.title("🎫 Ticket System - Streamlit Edition")
+st.title("🎫 Ticket System")
 load_data()
 
 menu = ["Submit Ticket", "Admin Login"]
