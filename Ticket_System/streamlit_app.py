@@ -1,54 +1,56 @@
 # streamlit_app.py
 import streamlit as st
-import json
-import os
+
 import hashlib
 from datetime import datetime
+import firebase_admin
+from firebase_admin import credentials, db
+
+# Firebase references
+TICKETS_REF = db.reference("tickets")
+COUNTER_REF = db.reference("ticket_counter")
+DELETED_REF = db.reference("deleted_tickets")
+
+# Initialize Firebase Admin
+if not firebase_admin._apps:
+    cred = credentials.Certificate({
+        "type": st.secrets.firebase["type"],
+        "project_id": st.secrets.firebase["project_id"],
+        "private_key_id": st.secrets.firebase["private_key_id"],
+        "private_key": st.secrets.firebase["private_key"],
+        "client_email": st.secrets.firebase["client_email"],
+        "client_id": st.secrets.firebase["client_id"],
+        "auth_uri": st.secrets.firebase["auth_uri"],
+        "token_uri": st.secrets.firebase["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets.firebase["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets.firebase["client_x509_cert_url"],
+        "universe_domain": st.secrets.firebase["universe_domain"]
+    })
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://ticketing-system-a9869-default-rtdb.firebaseio.com/'
+    })
 
 # Load data
 def load_data():
     if "tickets" not in st.session_state:
-        if os.path.exists("tickets.json"):
-            with open("tickets.json", 'r') as f:
-                st.session_state.tickets = json.load(f)
-        else:
-            st.session_state.tickets = []
+        data = TICKETS_REF.get()
+        st.session_state.tickets = list(data.values()) if data else []
 
     if "ticket_counter" not in st.session_state:
-        if os.path.exists("counters.json"):
-            with open("counters.json", 'r') as f:
-                st.session_state.ticket_counter = int(f.read())
-        else:
-            st.session_state.ticket_counter = 0
-
-load_data()
-
-
-# Global state
-if "tickets" not in st.session_state:
-    st.session_state.tickets = []
-if "ticket_counter" not in st.session_state:
-    st.session_state.ticket_counter = 1
-
-
-
-def load_deleted_tickets():
-    if os.path.exists(RECYCLE_BIN_FILE):
-        with open(RECYCLE_BIN_FILE, "r") as f:
-            return json.load(f)
-    return []
-
-def save_deleted_ticket(ticket):
-    deleted = load_deleted_tickets()
-    deleted.append(ticket)
-    with open(RECYCLE_BIN_FILE, "w") as f:
-        json.dump(deleted, f, indent=2)
+        count = COUNTER_REF.get()
+        st.session_state.ticket_counter = count if count else 0
 
 def save_data():
-    with open(TICKETS_FILE, 'w') as f:
-        json.dump(st.session_state.tickets, f, indent=2)
-    with open(COUNTER_FILE, 'w') as f:
-        f.write(str(st.session_state.ticket_counter))
+    TICKETS_REF.set({ticket["id"]: ticket for ticket in st.session_state.tickets})
+    COUNTER_REF.set(st.session_state.ticket_counter)
+
+def load_deleted_tickets():
+    deleted = DELETED_REF.get()
+    return list(deleted.values()) if deleted else []
+
+def save_deleted_ticket(ticket):
+    DELETED_REF.child(ticket["id"]).set(ticket)
+
 
 def load_admins_hash():
     return dict(st.secrets["admins"])
@@ -60,6 +62,7 @@ def create_ticket():
     ticket_id = f"TICKET-{st.session_state.ticket_counter:03d}"
     user = st.text_input("Enter your name", key="create_user")
     issue = st.text_area("Describe your issue", key="create_issue")
+
     if st.button("Submit Ticket", key="submit_ticket"):
         if user and issue:
             ticket = {
@@ -70,11 +73,15 @@ def create_ticket():
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "notes": []
             }
+
+            # Add to session state and Firebase
             st.session_state.tickets.append(ticket)
             st.session_state.ticket_counter += 1
-            save_data()
+            save_data()  # This now updates Firebase
+
             st.success(f"Hi {user}, we have received your support request and will respond shortly.")
             st.success(f"Your Ticket ID is {ticket_id}")
+
 
 def view_tickets():
     if not st.session_state.tickets:
@@ -105,7 +112,9 @@ def update_ticket():
         ticket = next((t for t in st.session_state.tickets if t["id"] == st.session_state.selected_ticket_id), None)
         if ticket:
             st.markdown(f"### Ticket: {ticket['id']}")
-            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"], index=["Open", "In Progress", "Closed"].index(ticket["status"]), key="update_status")
+            new_status = st.selectbox("Select new status", ["Open", "In Progress", "Closed"],
+                                      index=["Open", "In Progress", "Closed"].index(ticket["status"]),
+                                      key="update_status")
             note_text = st.text_area("Add a note describing the update", key="update_note")
 
             if st.button("Update Ticket Status", key="submit_update_ticket"):
@@ -114,6 +123,13 @@ def update_ticket():
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "text": note_text
                 })
+
+                # Update Firebase
+                try:
+                    db.reference(f"tickets/{ticket['id']}").set(ticket)
+                except Exception as e:
+                    st.error(f"Failed to update Firebase: {e}")
+
                 save_data()
                 st.success("Ticket updated successfully.")
                 st.session_state.selected_ticket_id = None
@@ -121,59 +137,89 @@ def update_ticket():
             st.error("Ticket not found.")
             st.session_state.selected_ticket_id = None
 
+
 def search_by_user():
     name = st.text_input("Enter name to search for tickets", key="search_user")
     if name:
+        ref = db.reference("tickets")
+        all_tickets = ref.get() or {}
         found = False
-        for ticket in st.session_state.tickets:
+        for ticket_id, ticket in all_tickets.items():
             if ticket["user"].lower() == name.lower():
                 st.text(f"ID: {ticket['id']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
                 found = True
         if not found:
             st.info("No tickets found for that user.")
 
+
 def filter_tickets():
     status = st.selectbox("Filter tickets by status", ["Open", "In Progress", "Closed"], key="filter_status")
-    for ticket in st.session_state.tickets:
+    ref = db.reference("tickets")
+    all_tickets = ref.get() or {}
+    for ticket_id, ticket in all_tickets.items():
         if ticket["status"] == status:
             st.text(f"ID: {ticket['id']}, User: {ticket['user']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
 
 
+
 def delete_ticket(admin_username):
-    view_tickets()
     ticket_id = st.text_input("Enter Ticket ID to delete", key="delete_ticket_id").strip().upper()
-    for ticket in st.session_state.tickets:
-        if ticket["id"] == ticket_id:
-            if st.button("Confirm Delete", key="confirm_delete"):
-                deleted_entry = ticket.copy()
-                deleted_entry['deleted_by'] = admin_username
-                deleted_entry['deleted_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                save_deleted_ticket(deleted_entry)
-                st.session_state.tickets.remove(ticket)
-                save_data()
-                st.success("Ticket deleted and moved to recycle bin.")
-                return
-    if ticket_id:
+    tickets_ref = db.reference("tickets")
+    tickets = tickets_ref.get() or {}
+
+    # Check if ticket exists in Firebase
+    target_ticket = None
+    for tid, t in tickets.items():
+        if t["id"] == ticket_id:
+            target_ticket = t
+            break
+
+    if target_ticket:
+        if st.button("Confirm Delete", key="confirm_delete"):
+            deleted_entry = target_ticket.copy()
+            deleted_entry["deleted_by"] = admin_username
+            deleted_entry["deleted_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Move ticket to recycle_bin
+            recycle_ref = db.reference("recycle_bin")
+            recycle_ref.child(ticket_id).set(deleted_entry)
+
+            # Delete from tickets
+            for tid, t in tickets.items():
+                if t["id"] == ticket_id:
+                    tickets_ref.child(tid).delete()
+                    break
+
+            st.success("Ticket deleted and moved to recycle bin.")
+    elif ticket_id:
         st.error("Invalid Ticket ID.")
 
+
 def restore_deleted_ticket():
-    deleted = load_deleted_tickets()
-    if not deleted:
+    recycle_ref = db.reference("recycle_bin")
+    deleted_tickets = recycle_ref.get() or {}
+
+    if not deleted_tickets:
         st.info("Recycle bin is empty.")
         return
-    for i, ticket in enumerate(deleted):
+
+    for ticket_id, ticket in deleted_tickets.items():
         with st.expander(f"{ticket['id']} | Deleted by: {ticket.get('deleted_by', 'Unknown')}"):
             st.write(f"User: {ticket['user']} | Status: {ticket['status']} | Deleted at: {ticket['deleted_at']}")
             if st.button(f"Restore {ticket['id']}", key=f"restore_{ticket['id']}"):
+                # Clean up metadata
                 ticket.pop('deleted_by', None)
                 ticket.pop('deleted_at', None)
-                st.session_state.tickets.append(ticket)
-                save_data()
-                deleted.pop(i)
-                with open(RECYCLE_BIN_FILE, "w") as f:
-                    json.dump(deleted, f, indent=2)
+
+                # Restore to tickets
+                tickets_ref = db.reference("tickets")
+                tickets_ref.child(ticket_id).set(ticket)
+
+                # Remove from recycle bin
+                recycle_ref.child(ticket_id).delete()
+
                 st.success("Ticket restored successfully.")
-                st.experimental_rerun()
+                st.rerun()
 
 def show_instructions():
     st.title("📘 Instructions:")
@@ -241,7 +287,10 @@ def admin_menu(username):
     elif option == "Restore Deleted Ticket":
         restore_deleted_ticket()
 
+load_data()
+
 # App UI starts here
+load_data()
 
 col1, col2 = st.columns([6, 1])
 with col1:
@@ -280,7 +329,7 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts += 1
                     st.error("Invalid username or password")
 
-load_data()
+
 
 # Sidebar navigation
 nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
