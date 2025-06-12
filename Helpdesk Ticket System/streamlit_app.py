@@ -10,12 +10,6 @@ TICKETS_FILE = "tickets.json"
 COUNTER_FILE = "counters.json"
 RECYCLE_BIN_FILE = "deleted_tickets.json"
 
-# Global state
-if "tickets" not in st.session_state:
-    st.session_state.tickets = []
-if "ticket_counter" not in st.session_state:
-    st.session_state.ticket_counter = 1
-
 # Load data
 def load_data():
     if "tickets" not in st.session_state:
@@ -31,6 +25,15 @@ def load_data():
                 st.session_state.ticket_counter = int(f.read())
         else:
             st.session_state.ticket_counter = 0
+load_data()
+
+# Global state
+if "tickets" not in st.session_state:
+    st.session_state.tickets = []
+if "ticket_counter" not in st.session_state:
+    st.session_state.ticket_counter = 1
+
+
 
 def load_deleted_tickets():
     if os.path.exists(RECYCLE_BIN_FILE):
@@ -242,7 +245,6 @@ def admin_menu(username):
         restore_deleted_ticket()
 
 # App UI starts here
-load_data()
 
 col1, col2 = st.columns([6, 1])
 with col1:
