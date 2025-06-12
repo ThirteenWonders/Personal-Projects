@@ -10,7 +10,6 @@ from datetime import datetime
 TICKETS_FILE = "tickets.json"
 COUNTER_FILE =  "counters.json"
 RECYCLE_BIN_FILE = "deleted_tickets.json"
-CONFIG_FILE = "config.json"
 
 # Global state
 if "tickets" not in st.session_state:
