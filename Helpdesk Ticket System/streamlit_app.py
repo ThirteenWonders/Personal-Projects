@@ -8,18 +8,19 @@ from datetime import datetime
 # Load data
 def load_data():
     if "tickets" not in st.session_state:
-        if os.path.exists(TICKETS_FILE):
-            with open(TICKETS_FILE, 'r') as f:
+        if os.path.exists("tickets.json"):
+            with open("tickets.json", 'r') as f:
                 st.session_state.tickets = json.load(f)
         else:
-            st.session_state.tickets = []  # ensure it's always initialized
+            st.session_state.tickets = []
 
     if "ticket_counter" not in st.session_state:
-        if os.path.exists(COUNTER_FILE):
-            with open(COUNTER_FILE, 'r') as f:
+        if os.path.exists("counters.json"):
+            with open("counters.json", 'r') as f:
                 st.session_state.ticket_counter = int(f.read())
         else:
             st.session_state.ticket_counter = 0
+
 load_data()
 
 # Global state
