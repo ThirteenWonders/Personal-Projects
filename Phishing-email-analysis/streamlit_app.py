@@ -66,7 +66,7 @@ data = load_case(case)
 st.title(case)
 
 # Image
-st.image(data["image_url"], caption="Phishing Email Screenshot", use_column_width=True)
+st.image(data["image_url"], caption="Phishing Email Screenshot", use_container_width=True)
 
 # Red Flags
 st.subheader("⚠️ Red Flags")
