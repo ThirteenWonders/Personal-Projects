@@ -281,9 +281,16 @@ nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
 if nav == "Instructions":
     show_instructions()
 elif nav == "Home":
+    # If admin is logged in → show admin menu
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
+    
+    # If admin clicked login but hasn't logged in yet → show login form only
     elif st.session_state.get("show_login"):
-        pass  # Suppress user view while login form is showing
+        # show_login block is handled earlier in your script
+        pass
+    
+    # Default case → show create ticket for users
     else:
         create_ticket()
+
