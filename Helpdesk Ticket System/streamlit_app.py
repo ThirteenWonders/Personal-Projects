@@ -114,6 +114,24 @@ def update_ticket():
             st.error("Ticket not found.")
             st.session_state.selected_ticket_id = None
 
+def search_by_user():
+    name = st.text_input("Enter name to search for tickets", key="search_user")
+    if name:
+        found = False
+        for ticket in st.session_state.tickets:
+            if ticket["user"].lower() == name.lower():
+                st.text(f"ID: {ticket['id']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
+                found = True
+        if not found:
+            st.info("No tickets found for that user.")
+
+def filter_tickets():
+    status = st.selectbox("Filter tickets by status", ["Open", "In Progress", "Closed"], key="filter_status")
+    for ticket in st.session_state.tickets:
+        if ticket["status"] == status:
+            st.text(f"ID: {ticket['id']}, User: {ticket['user']}, Issue: {ticket['issue']}, Status: {ticket['status']}")
+
+
 def delete_ticket(admin_username):
     view_tickets()
     ticket_id = st.text_input("Enter Ticket ID to delete", key="delete_ticket_id").strip().upper()
@@ -154,47 +172,61 @@ def show_instructions():
     st.title("📘 Instructions:")
 
     st.markdown("""
-### 👤 For Users (Non-Admin)
+    ### 👤 For Users (Non-Admin)
 
-1. **Submit a Ticket**
-   - Fill in the required information (name, issue category, description).
-   - Click **Submit Ticket** to generate a unique Ticket ID.
-   - Your ticket will be reviewed and updated by an administrator.
+    1. **Submit a Ticket**
+       - Fill in the required information (name, issue category, description).
+       - Click **Submit Ticket** to generate a unique Ticket ID.
+       - Your ticket will be reviewed and updated by an administrator.
 
----
+    ---
 
-### 🔐 For Admins
+    ### 🔐 For Admins
 
-1. **Login**
-   - Click the **Admin Login** button at the top right.
-   - Enter your **admin username and password**.
-   - Username: **admin1**
-   - Password: **admin123**
-   - Upon success, you’ll see additional admin options.
+    1. **Login**
+       - Click the **Admin Login** button at the top right.
+       - Enter your **admin username and password**.
+       - Username: **admin1**
+       - Password: **admin123**
+       - Upon success, you’ll see additional admin options.
 
-2. **Admin Features**
-   - **View Tickets**: See all submitted tickets with status and timestamps.
-   - **Update Ticket**: Change the status of a ticket and add notes.
-   - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
-   - **Restore Ticket**: Recover deleted tickets from the recycle bin.
-   - **Change Admin Password**: Update your own login credentials securely.
+    2. **Admin Features**
+       - **View Tickets**: See all submitted tickets with status and timestamps.
+       - **Update Ticket**: Change the status of a ticket and add notes.
+       - **Delete Ticket**: Move a ticket to the recycle bin with audit logging.
+       - **Restore Ticket**: Recover deleted tickets from the recycle bin.
+       - **Change Admin Password**: Update your own login credentials securely.
 
----
+    ---
 
-### 💡 Notes
+    ### 💡 Notes
 
-- All data is saved to `.json` files and will persist between sessions.
-- Passwords are stored securely using SHA-256 hashing.
-- Admin logins are tracked to ensure accountability for deletions.
+    - All data is saved to `.json` files and will persist between sessions.
+    - Passwords are stored securely using SHA-256 hashing.
+    - Admin logins are tracked to ensure accountability for deletions.
 
-If you encounter any issues, please contact the system administrator @ nicholasang1@outlook.com
-    """)
+    If you encounter any issues, please contact the system administrator @ nicholasang1@outlook.com.
+        """)
 
 def admin_menu(username):
     st.subheader(f"Welcome, {username}")
-    option = st.selectbox("Admin Actions", ["View All Tickets", "Update Ticket", "Delete a Ticket", "Restore Deleted Ticket"], key="admin_menu_select")
+    option = st.selectbox(
+        "Admin Actions",
+        ["View All Tickets", "Update Ticket", "Delete a Ticket", "Restore Deleted Ticket"],
+        key="admin_menu_select"
+    )
+
     if option == "View All Tickets":
         view_tickets()
+
+        # Add a divider and subheading
+        st.markdown("---")
+        st.subheader("🔍 Search & Filter")
+
+        # Integrate search and filter
+        search_by_user()
+        filter_tickets()
+
     elif option == "Update Ticket":
         update_ticket()
     elif option == "Delete a Ticket":
