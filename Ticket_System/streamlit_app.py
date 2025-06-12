@@ -32,7 +32,6 @@ TICKETS_REF = db.reference("tickets")
 COUNTER_REF = db.reference("ticket_counter")
 DELETED_REF = db.reference("deleted_tickets")
 
-
 # Load data
 def load_data():
     if "tickets" not in st.session_state:
@@ -289,6 +288,7 @@ def admin_menu(username):
     elif option == "Restore Deleted Ticket":
         restore_deleted_ticket()
 
+load_data()
 
 # App UI starts here
 load_data()
@@ -306,9 +306,19 @@ with col2:
         if st.button("Admin Login", key="login_button"):
             st.session_state["show_login"] = True
 
-# Admin login form
-if "admin" not in st.session_state:
-    if st.session_state.get("show_login"):
+
+
+
+# Sidebar navigation
+nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
+
+if nav == "Instructions":
+    show_instructions()
+elif nav == "Home":
+    if "admin" in st.session_state:
+        admin_menu(st.session_state["admin"])
+
+    elif st.session_state.get("show_login"):
         st.subheader("\U0001F512 Admin Login")
         if "login_attempts" not in st.session_state:
             st.session_state.login_attempts = 0
@@ -325,30 +335,11 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts = 0
                     st.session_state.show_login = False
                     st.success(f"Welcome, {username}!")
-                    
-
+                    st.rerun()  # Optional: rerun to refresh UI
                 else:
                     st.session_state.login_attempts += 1
                     st.error("Invalid username or password")
-
-
-
-# Sidebar navigation
-nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
-
-if nav == "Instructions":
-    show_instructions()
-elif nav == "Home":
-    # If admin is logged in → show admin menu
-    if "admin" in st.session_state:
-        admin_menu(st.session_state["admin"])
-
-    # If admin clicked login but hasn't logged in yet → show login form only
-    elif st.session_state.get("show_login"):
-        # show_login block is handled earlier in your script
-        pass
-
-    # Default case → show create ticket for users
     else:
         create_ticket()
+
 
