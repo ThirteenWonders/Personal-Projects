@@ -24,7 +24,7 @@ if not firebase_admin._apps:
         "universe_domain": st.secrets.firebase["universe_domain"]
     })
     firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://ticketing-system-a9869-default-rtdb.firebaseio.com/'
+        'databaseURL': 'https://ticketing-system-a9869-default-rtdb.asia-southeast1.firebasedatabase.app/'
     })
 
 # Firebase references
