@@ -74,7 +74,7 @@ def create_ticket():
             st.session_state.tickets.append(ticket)
             st.session_state.ticket_counter += 1
             save_data()
-            st.success(f"Ticket {ticket_id} created successfully!")
+            st.success(f"Hi {user}, we have received your support request and will respond shortly. Your Ticket ID is {ticket_id}")
 
 def view_tickets():
     if not st.session_state.tickets:
@@ -185,7 +185,7 @@ def admin_menu(username):
         restore_deleted_ticket()
 
 # UI
-st.title("🎫 Ticket System")
+st.title("🎫 Helpdesk Ticket System")
 load_data()
 
 menu = ["Submit Ticket", "Admin Login"]
