@@ -18,12 +18,19 @@ if "ticket_counter" not in st.session_state:
 
 # Load data
 def load_data():
-    if os.path.exists(TICKETS_FILE):
-        with open(TICKETS_FILE, 'r') as f:
-            st.session_state.tickets = json.load(f)
-    if os.path.exists(COUNTER_FILE):
-        with open(COUNTER_FILE, 'r') as f:
-            st.session_state.ticket_counter = int(f.read())
+    if "tickets" not in st.session_state:
+        if os.path.exists(TICKETS_FILE):
+            with open(TICKETS_FILE, 'r') as f:
+                st.session_state.tickets = json.load(f)
+        else:
+            st.session_state.tickets = []  # ensure it's always initialized
+
+    if "ticket_counter" not in st.session_state:
+        if os.path.exists(COUNTER_FILE):
+            with open(COUNTER_FILE, 'r') as f:
+                st.session_state.ticket_counter = int(f.read())
+        else:
+            st.session_state.ticket_counter = 0
 
 def load_deleted_tickets():
     if os.path.exists(RECYCLE_BIN_FILE):
@@ -166,7 +173,7 @@ def restore_deleted_ticket():
                 with open(RECYCLE_BIN_FILE, "w") as f:
                     json.dump(deleted, f, indent=2)
                 st.success("Ticket restored successfully.")
-                st.rerun()
+                st.experimental_rerun()
 
 def show_instructions():
     st.title("📘 Instructions:")
@@ -269,11 +276,12 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts = 0
                     st.session_state.show_login = False
                     st.success(f"Welcome, {username}!")
-                    st.rerun()
+
                 else:
                     st.session_state.login_attempts += 1
                     st.error("Invalid username or password")
 
+load_data()
 
 # Sidebar navigation
 nav = st.sidebar.radio("Navigation", ["Home", "Instructions"], key="nav_select")
@@ -284,12 +292,12 @@ elif nav == "Home":
     # If admin is logged in → show admin menu
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
-    
+
     # If admin clicked login but hasn't logged in yet → show login form only
     elif st.session_state.get("show_login"):
         # show_login block is handled earlier in your script
         pass
-    
+
     # Default case → show create ticket for users
     else:
         create_ticket()
