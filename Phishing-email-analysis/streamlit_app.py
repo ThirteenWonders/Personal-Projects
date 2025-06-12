@@ -66,10 +66,7 @@ data = load_case(case)
 st.title(case)
 
 # Image
-try:
-    st.image(Image.open(data["image_path"]), caption="Phishing Email Screenshot", use_column_width=True)
-except FileNotFoundError:
-    st.error("Image not found. Please ensure the file path is correct.")
+st.image(data["image_url"], caption="Phishing Email Screenshot", use_column_width=True)
 
 # Red Flags
 st.subheader("⚠️ Red Flags")
