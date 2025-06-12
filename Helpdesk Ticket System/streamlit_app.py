@@ -5,11 +5,6 @@ import os
 import hashlib
 from datetime import datetime
 
-# File paths
-TICKETS_FILE = "tickets.json"
-COUNTER_FILE = "counters.json"
-RECYCLE_BIN_FILE = "deleted_tickets.json"
-
 # Load data
 def load_data():
     if "tickets" not in st.session_state:
