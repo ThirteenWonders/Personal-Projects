@@ -269,6 +269,7 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts = 0
                     st.session_state.show_login = False
                     st.success(f"Welcome, {username}!")
+                    st.experimental_rerun()
                 else:
                     st.session_state.login_attempts += 1
                     st.error("Invalid username or password")
