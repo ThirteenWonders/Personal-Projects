@@ -290,14 +290,16 @@ if "admin" in st.session_state:
 
 
 # Sidebar navigation
-option = st.sidebar.radio("Navigation", ["Home", "Instructions", "Admin Panel"])
+option = st.sidebar.radio("Navigation", ["Home", "Instructions"])
 
 # Routing logic
 if option == "Instructions":
     show_instructions()
+
 elif option == "Home":
     if "admin" not in st.session_state and not st.session_state.get("show_login"):
         create_ticket()
+
 elif option == "Admin Panel":
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
