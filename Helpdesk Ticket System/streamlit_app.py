@@ -151,7 +151,7 @@ def restore_deleted_ticket():
                 st.experimental_rerun()
 
 def show_instructions():
-    st.title("📘 Instructions: Helpdesk Ticket System")
+    st.title("📘 Instructions:")
 
     st.markdown("""
 ### 👤 For Users (Non-Admin)
