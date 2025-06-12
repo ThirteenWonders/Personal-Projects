@@ -54,8 +54,11 @@ def hash_password(password):
 
 def create_ticket():
     ticket_id = f"TICKET-{st.session_state.ticket_counter:03d}"
-    user = st.text_input("Enter your name")
-    issue = st.text_area("Describe your issue")
+    user = st.text_input("Enter your name", key="ticket_user_name")
+    issue = st.selectbox("Select issue category", ["Login Issue", "Payment Issue", "Bug Report", "Others"],
+                         key="ticket_issue_category")
+    desc = st.text_area("Describe the issue", key="ticket_description")
+
     if st.button("Submit Ticket"):
         if user and issue:
             ticket = {
