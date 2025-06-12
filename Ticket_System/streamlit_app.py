@@ -22,7 +22,6 @@ def load_data():
             st.session_state.ticket_counter = 0
 
 load_data()
-st.write("🛠 Debug: Loaded tickets from file:", st.session_state.get("tickets", "No tickets key"))
 
 
 # Global state
