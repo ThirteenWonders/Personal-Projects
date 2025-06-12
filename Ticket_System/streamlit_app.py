@@ -256,7 +256,7 @@ def show_instructions():
 
     ### 💡 Notes
 
-    - All data is saved to `.json` files and will persist between sessions.
+    - All data is saved to a firebase realtime database and will persist between sessions.
     - Passwords are stored securely using SHA-256 hashing.
     - Admin logins are tracked to ensure accountability for deletions.
 
