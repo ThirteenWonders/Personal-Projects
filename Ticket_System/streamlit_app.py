@@ -32,19 +32,6 @@ TICKETS_REF = db.reference("tickets")
 COUNTER_REF = db.reference("ticket_counter")
 DELETED_REF = db.reference("deleted_tickets")
 
-def test_firebase_connection():
-    try:
-        test_ref = db.reference("test_connection")
-        test_ref.set({"status": "connected"})
-        result = test_ref.get()
-
-        if result and result.get("status") == "connected":
-            st.success("✅ Firebase connected successfully.")
-        else:
-            st.error("⚠️ Firebase connection failed: Data mismatch.")
-
-    except Exception as e:
-        st.error(f"❌ Firebase connection error: {e}")
 
 # Load data
 def load_data():
@@ -339,7 +326,7 @@ if "admin" not in st.session_state:
                     st.session_state.login_attempts = 0
                     st.session_state.show_login = False
                     st.success(f"Welcome, {username}!")
-                    test_firebase_connection()
+                    
 
                 else:
                     st.session_state.login_attempts += 1
