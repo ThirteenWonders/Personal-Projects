@@ -283,5 +283,7 @@ if nav == "Instructions":
 elif nav == "Home":
     if "admin" in st.session_state:
         admin_menu(st.session_state["admin"])
+    elif st.session_state.get("show_login"):
+        pass  # Suppress user view while login form is showing
     else:
         create_ticket()
