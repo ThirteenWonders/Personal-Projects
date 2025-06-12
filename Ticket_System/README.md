@@ -1,60 +1,46 @@
-# 🎫 Ticket System CLI App
+# 🎫 Helpdesk Ticketing System (Python + Streamlit + Firebase)
 
-A command-line ticket management system built with Python. Supports admin authentication, ticket tracking, deletion recovery (recycle bin), and password hashing.
-
----
-
-## 🧩 Features
-
-- Submit and manage tickets with persistent storage (`JSON`)
-- Admin login with SHA-256 hashed passwords
-- Recycle bin for deleted tickets, with timestamp and audit logging
-- Change admin password securely
-- Restore deleted tickets
-- Data files auto-created if missing
-- Uses `getpass` for hidden password input
-- CLI-friendly and `.exe` exportable using PyInstaller
+A web-based real-time ticket management system built using Python and Streamlit, with Firebase Realtime Database for persistent storage. Designed to simulate real-world support workflows with both user and admin functionalities.
 
 ---
 
-## 🔐 Admin Setup
+## 📘 Instructions
 
-Admin accounts are stored in `config.json` using SHA-256 password hashes.
+### 👤 For Users (Non-Admin)
+- **Submit a Ticket**
+  - Enter your name and describe your issue.
+  - Click **Submit Ticket** to receive a unique Ticket ID.
+  - Your ticket will be reviewed and updated by an administrator.
 
-### Admin Account Details
+### 🔐 For Admins
 
-| Username | Password | Hashed Password |
-|----------|----------|-----------------|
-| admin1   | admin123 | `240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9` |
-| admin2   | admin234 | `9924801e8aca687d0a71f4ab14a8ed1644d48348dce8941b6cfdf7fb3076bae2` |
+#### Login
+- Click the **Admin Login** button at the top right.
+- Enter your admin username and password:
+  - **Username:** `admin1`
+  - **Password:** `admin123`
+- Upon successful login, you’ll see additional admin functions.
+
+#### Admin Features
+- **View Tickets**: Browse all submitted tickets with status and timestamps.
+- **Update Ticket**: Modify the status and add internal notes to any ticket.
+- **Delete Ticket**: Soft-delete tickets (moved to a recycle bin with audit logs).
+- **Restore Ticket**: Recover deleted tickets from the recycle bin.
 
 ---
 
-## 🔧 Generate Your Own Hashed Password
+## 💡 Notes
 
-Run the following Python code:
+- Data is saved in **Firebase Realtime Database** and persists across sessions.
+- Admin passwords are securely hashed using **SHA-256**.
+- Admin actions like deletions are logged for transparency and accountability.
 
-```python
-import hashlib
-print(hashlib.sha256("yourpassword".encode()).hexdigest())
+---
 
-💡 Replace "yourpassword" with a password of your choice.
-```
+## 🚀 Live App
+[Streamlit App](https://appticketingsystem.streamlit.app/)
 
-## ▶️ How to Run the Program
+---
 
-### Option 1: Run the `.exe` File (Recommended for Windows Users)
-
-1. Download all the files in the repository.
-2. Open File Explorer and navigate to the folder where you saved the files.
-3. Run the `ticket.exe` program.
-
-### Option 2: Manual Run in Terminal
-
-1. Download all project files (including `ticket.py` and `config.json`).
-2. Open your terminal or command prompt.
-3. Navigate to the project folder.
-4. Run the program:
-
-```bash
-python ticket.py
+## 📩 Support
+For assistance, please contact the system administrator at **nicholasang1@outlook.com**
